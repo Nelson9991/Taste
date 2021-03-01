@@ -1,0 +1,61 @@
+﻿@page
+@model Taste.Pages.Admin.Order.OrderListModel
+@{
+    // Con  HttpContext.Request.Query Obtengo los querystrings de la url
+    var status = HttpContext.Request.Query["status"].ToString();
+    var cancelled = "text-primary";
+    var completed = "text-primary";
+    var inProcess = "text-primary";
+
+    if (status == "cancelled")
+    {
+        cancelled = "active text-white";
+    }
+    else if (status == "completed")
+    {
+        completed = "active text-white";
+    }
+    else if (status == "inProcess")
+    {
+        inProcess = "active text-white";
+    }
+}
+
+<div class="border backgroundWhite container p-3">
+    <div class="d-flex flex-row justify-content-between">
+        <div>
+            <h2 class="text-primary">Order's List</h2>
+        </div>
+        <div>
+            <ul class="list-group list-group-horizontal-sm">
+                <a style="text-decoration: none;" asp-page="OrderList" asp-route-status="cancelled">
+                    <li class="list-group-item @cancelled"> Cancelled </li>
+                </a>
+                <a style="text-decoration: none;" asp-page="OrderList" asp-route-status="completed">
+                    <li class="list-group-item @completed"> Completed </li>
+                </a>
+                <a style="text-decoration: none;" asp-page="OrderList" asp-route-status="inProcess">
+                    <li class="list-group-item @inProcess"> Inprocess </li>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <table id="DT_Load" class="table table-bordered" style="width: 100%">
+            <thead class="table-dark">
+            <tr>
+                <th>Order Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Order Total</th>
+                <th></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/orderList.js"></script>
+}

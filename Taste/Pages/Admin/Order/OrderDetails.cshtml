@@ -1,0 +1,121 @@
+﻿@page
+@using Utilities
+@model Taste.Pages.Admin.Order.OrderDetailsModel
+@{
+}
+
+
+<form method="post">
+    <div class="border ml-1 backgroundWhite mt-4">
+        <div class="row pb-1">
+            <div class="col-12 col-md-6 ">
+                <p class="h2  text-primary">Order Details</p>
+            </div>
+            <div class="col-12 col-md-4 offset-md-2">
+                <a asp-page="/Admin/Order/OrderList" class="btn btn-success form-control">Back to Orders </a>
+            </div>
+        </div>
+        <hr/>
+
+        <div class="row pt-2">
+
+            <div class="col-lg-8 col-12" style="border-right: 1px solid #bbb9b9">
+                <input type="hidden" asp-for="OrderDetailsVm.OrderHeader.Id"/>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label>Name</label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input asp-for="OrderDetailsVm.OrderHeader.PickUpName" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label asp-for="OrderDetailsVm.OrderHeader.ApplicationUser.Email"></label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input asp-for="OrderDetailsVm.OrderHeader.ApplicationUser.Email" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label asp-for="OrderDetailsVm.OrderHeader.ApplicationUser.PhoneNumber"></label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input asp-for="OrderDetailsVm.OrderHeader.ApplicationUser.PhoneNumber" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label asp-for="OrderDetailsVm.OrderHeader.OrderTotal"></label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input asp-for="OrderDetailsVm.OrderHeader.OrderTotal" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label asp-for="OrderDetailsVm.OrderHeader.OrderDate"></label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input value="@Model.OrderDetailsVm.OrderHeader.OrderDate.ToShortDateString() @Model.OrderDetailsVm.OrderHeader.PickUpTime.ToShortTimeString()" disabled class="form-control"/>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-md-3 col-12 text-primary">
+                        <label asp-for="OrderDetailsVm.OrderHeader.Comments"></label>
+                    </div>
+                    <div class="col-md-9 col-12">
+                        <input asp-for="OrderDetailsVm.OrderHeader.Comments" disabled class="form-control"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-12">
+                <h4 class="d-flex justify-content-between align-content-center mb-3">
+                    <span class="text-muted">Order ID: </span>
+                    <span class="badge bg-secondary badge-pill">@Model.OrderDetailsVm.OrderHeader.Id</span>
+                </h4>
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.OrderDetailsVm.OrderDetailsList)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div>
+                                <h6 class="my-0">@item.Name</h6>
+                                <small class="text-muted">Quantity : @item.Count</small>
+                            </div>
+                            <span class="text-muted">$@(item.Price * item.Count)</span>
+                        </li>
+                    }
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <span class="text-info"> Total (USD)</span>
+                        <strong class="text-info">@Model.OrderDetailsVm.OrderHeader.OrderTotal</strong>
+                    </li>
+
+                </ul>
+
+                @if (Model.OrderDetailsVm.OrderHeader.Status == Sd.StatusReady && (User.IsInRole(Sd.ManagerRole) || User.IsInRole(Sd.FrontDeskRole)))
+                {
+                    <button type="submit" asp-page-handler="OrderConfirm" asp-route-orderId="@Model.OrderDetailsVm.OrderHeader.Id" class="btn btn-success form-control"><i class="far fa-thumbs-up"></i> Confirm Pickup</button>
+                }
+                else
+                {
+                    <button type="submit" disabled class="btn btn-info form-control">@Model.OrderDetailsVm.OrderHeader.Status</button>
+                }
+                @if ((User.IsInRole(Sd.ManagerRole) || User.IsInRole(Sd.FrontDeskRole)) && (Model.OrderDetailsVm.OrderHeader.Status == Sd.StatusSubmitted || Model.OrderDetailsVm.OrderHeader.Status == Sd.StatusInProcess || Model.OrderDetailsVm.OrderHeader.Status == Sd.StatusReady))
+                {
+                    <div class="row pt-1">
+                        <div class="col-6">
+                            <button type="submit" asp-page-handler="OrderCancel" asp-route-orderId="@Model.OrderDetailsVm.OrderHeader.Id" class="btn btn-warning form-control"><i class="fas fa-times"></i> &nbsp; Cancel Order</button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" asp-page-handler="OrderRefund" asp-route-orderId="@Model.OrderDetailsVm.OrderHeader.Id" class="btn btn-danger form-control"><i class="fas fa-times"></i> &nbsp; Refund Order</button>
+                        </div>
+                    </div> 
+
+                }
+            </div>
+
+        </div>
+    </div>
+</form>

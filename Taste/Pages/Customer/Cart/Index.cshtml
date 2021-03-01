@@ -1,12 +1,13 @@
 ﻿@page
+@using System.Linq
 @model Taste.Pages.Customer.Cart.IndexModel
 @{
 }
 <form method="post">
     <br/>
-    @if (Model.OrderDetailsCartVM.CartList.Count > 0)
+    @if (Model.OrderDetailsCartVM.CartList.Any())
     {
-        <input type="hidden" asp-for="@Model.OrderDetailsCartVM.CartList[0].ApplicationUserId"/>
+        <input type="hidden" asp-for="@Model.OrderDetailsCartVM.CartList.First().ApplicationUserId"/>
 
         <div class="backgroundWhiteBorder">
             <div class="container">

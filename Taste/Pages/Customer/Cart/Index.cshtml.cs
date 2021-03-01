@@ -26,29 +26,43 @@ namespace Taste.Pages.Customer.Cart
 
         public OrderDetailsCartVM OrderDetailsCartVM { get; set; }
 
-        public async Task OnGet()
+        public async Task<IActionResult> OnGet()
         {
+            if (HttpContext.Session.GetInt32(Sd.ShoppingCart) is null ||
+                HttpContext.Session.GetInt32(Sd.ShoppingCart) == 0)
+            {
+                return RedirectToPage("../Home/Index");
+            }
+
             OrderDetailsCartVM = new OrderDetailsCartVM
             {
-                OrderHeader = new Models.OrderHeader()
+                OrderHeader = new Models.OrderHeader(),
+                CartList = new List<ShoppingCart>()
             };
 
             OrderDetailsCartVM.OrderHeader.OrderTotal = 0;
 
             var claim = User.FindFirst(x => x.Type == ClaimTypes.NameIdentifier);
 
-            IEnumerable<ShoppingCart> cart = await _unitOfWork.ShoppingCartRepository.GetAllAsync(x => x.ApplicationUserId == claim.Value);
-
-            if (cart != null)
+            if (claim is not null)
             {
-                OrderDetailsCartVM.CartList = cart.ToList();
+                IEnumerable<ShoppingCart> cart =
+                    await _unitOfWork.ShoppingCartRepository.GetAllAsync(x => x.ApplicationUserId == claim.Value);
+
+                if (cart != null)
+                {
+                    OrderDetailsCartVM.CartList = cart.ToList();
+                }
+
+                foreach (var cartItem in OrderDetailsCartVM.CartList)
+                {
+                    cartItem.MenuItem =
+                        await _unitOfWork.MenuItemRepository.GetFirstOrDefaultAsync(x => x.Id == cartItem.MenuItemId);
+                    OrderDetailsCartVM.OrderHeader.OrderTotal += (cartItem.MenuItem.Price * cartItem.Count);
+                }
             }
 
-            foreach (var cartItem in OrderDetailsCartVM.CartList)
-            {
-                cartItem.MenuItem = await _unitOfWork.MenuItemRepository.GetFirstOrDefaultAsync(x => x.Id == cartItem.MenuItemId);
-                OrderDetailsCartVM.OrderHeader.OrderTotal += (cartItem.MenuItem.Price * cartItem.Count);
-            }
+            return Page();
         }
 
         public async Task<IActionResult> OnPostPlus(int cartId)

@@ -1,12 +1,16 @@
 ﻿@page
+@using Microsoft.Extensions.Options
+@using Utilities
+@using System.Linq
 @model Taste.Pages.Customer.Cart.SummaryModel
+@inject IOptions<StripeSettings> StripeOptions
 @{
 }
 <form method="post">
-    <br/>
-    @if (Model.DetailsCartVM.CartList.Count > 0)
+    <br />
+    @if (Model.DetailsCartVM.CartList.Any())
     {
-        <input asp-for="@Model.DetailsCartVM.CartList[0].ApplicationUserId" type="hidden"/>
+        <input asp-for="@Model.DetailsCartVM.CartList.First().ApplicationUserId" type="hidden" />
         <div class="backgroundWhiteBorder">
             <div class="container">
                 <div class="card">
@@ -35,7 +39,7 @@
                                             <label>Name</label>
                                         </div>
                                         <div class="col-9">
-                                            <input id="txtName" asp-for="DetailsCartVM.OrderHeader.PickUpName" type="text" class="form-control"/>
+                                            <input id="txtName" asp-for="DetailsCartVM.OrderHeader.PickUpName" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -43,7 +47,7 @@
                                             <label>Phone Number</label>
                                         </div>
                                         <div class="col-9">
-                                            <input id="txtPhone" asp-for="DetailsCartVM.OrderHeader.PhoneNumber" type="text" class="form-control"/>
+                                            <input id="txtPhone" asp-for="DetailsCartVM.OrderHeader.PhoneNumber" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -51,7 +55,7 @@
                                             <label asp-for="DetailsCartVM.OrderHeader.PickUpDate"></label>
                                         </div>
                                         <div class="col-9">
-                                            <input id="datepicker" value="" asp-for="DetailsCartVM.OrderHeader.PickUpDate" type="text" class="form-control"/>
+                                            <input id="datepicker" value="" asp-for="DetailsCartVM.OrderHeader.PickUpDate" type="text" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -59,7 +63,7 @@
                                             <label asp-for="DetailsCartVM.OrderHeader.PickUpTime"></label>
                                         </div>
                                         <div class="col-9">
-                                            <input id="timepicker" type="text" value="" asp-for="DetailsCartVM.OrderHeader.PickUpTime" class="form-control"/>
+                                            <input id="timepicker" type="text" value="" asp-for="DetailsCartVM.OrderHeader.PickUpTime" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="row my-1">
@@ -101,6 +105,14 @@
                     <div class="card-footer">
                         <div class="row">
                             <div class="col-12 col-md-4 offset-md-8">
+                                @{
+                                    var orderTotalStripe = Model.DetailsCartVM.OrderHeader.OrderTotal * 100;
+                                }
+                                <script src="https://checkout.stripe.com/checkout.js" class="stripe-button" data-key="@StripeOptions.Value.PublicKey" data-amount="@orderTotalStripe" data-name="Taste Restaurant" data-lable="Place Order" data-description="Good Food, Good Mood." data-locale="auto" data-allow-remember-me="false" data-image="https://stripe.com/img/documentation/checkout/marketplace.png"></script>
+                                <script>
+                                    document.getElementsByClassName('stripe-button-el')[0].style.display =
+                                        'none';
+                                </script>
                                 <button type="submit" id="btnPlaceOrder" onclick="return validateInput()" value="Place Order" class="btn btn-success form-control">Place Order</button>
                             </div>
                         </div>
@@ -163,6 +175,7 @@
                 );
                 return false;
             }
+            return true;
         }
     </script>
 }

@@ -10,7 +10,7 @@ namespace DataAccess.Data.Repository.IRepository
     {
         public Task<T> GetAsync(int id);
 
-        public Task<IList<T>> GetAllAsync(
+        public Task<List<T>> GetAllAsync(
             Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             string includeProperties = null
@@ -24,5 +24,6 @@ namespace DataAccess.Data.Repository.IRepository
         public Task AddAsync(T entity);
         public Task Remove(int id);
         public void Remove(T entity);
+        public void RemoveRange(IEnumerable<T> entities);
     }
 }

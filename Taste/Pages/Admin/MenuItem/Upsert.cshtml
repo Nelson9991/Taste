@@ -1,0 +1,137 @@
+﻿@page
+@model Taste.Pages.Admin.MenuItem.UpsertModel
+@{
+    ViewData["Title"] = Model.MenuItemVM.MenuItem.Id == 0 ? "Create" : "Edit" + "Menu Item";
+}
+
+<!-- Para poder postear una form que trabaja con imagenes o files hay que agregar el atributo
+enctype="multipart/form-data" a tag de <form>
+-->
+<form method="post" enctype="multipart/form-data">
+    <div class="container">
+        <div class="row px-2 mx-2 backgroundWhite border">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-12 px-3" style="border-bottom: 1px solid #325d88">
+                <h2 class="text-primary">@(Model.MenuItemVM.MenuItem.Id == 0 ? "Create" : "Edit") Menu Item</h2>
+            </div>
+            <div class="col-8 pt-3">
+                @if (Model.MenuItemVM.MenuItem.Id != 0)
+                {
+                    <input type="hidden" asp-for="MenuItemVM.MenuItem.Id" />
+                }
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.Name"></label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="MenuItemVM.MenuItem.Name" class="form-control" />
+                        <span class="text-danger" asp-validation-for="MenuItemVM.MenuItem.Name"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.Price"></label>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="MenuItemVM.MenuItem.Price" class="form-control" />
+                        <span class="text-danger" asp-validation-for="MenuItemVM.MenuItem.Price"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.Description"></label>
+                    </div>
+                    <div class="col-9">
+                        <textarea id="txtDesc" style="height: 200px;" asp-for="MenuItemVM.MenuItem.Description" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.Image"></label>
+                    </div>
+                    <div class="col-9">
+                        <input type="file" name="files" id="uploadBox" class="form-control" />
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.CategoryId"></label>
+                    </div>
+                    <div class="col-9">
+                        <select asp-for="MenuItemVM.MenuItem.CategoryId" asp-items="Model.MenuItemVM.CategoryList" class="form-control">
+                            <option value="">-- Select a Category --</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="MenuItemVM.MenuItem.CategoryId"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-3">
+                        <label asp-for="MenuItemVM.MenuItem.FoodTypeId"></label>
+                    </div>
+                    <div class="col-9">
+                        <select asp-for="MenuItemVM.MenuItem.FoodTypeId" asp-items="Model.MenuItemVM.FoodTypeList" class="form-control">
+                            <option value="">-- Select a Food Type --</option>
+                        </select>
+                        <span class="text-danger" asp-validation-for="MenuItemVM.MenuItem.FoodTypeId"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-9 offset-3">
+                        <div class="row">
+                            <div class="col-6">
+                                @if (Model.MenuItemVM.MenuItem.Id != 0)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">
+                                        Update
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" onclick="return ValidateInput()" class="btn btn-primary form-control">
+                                        Create
+                                    </button>
+
+                                }
+                            </div>
+                            <div class="col-6">
+                                <a class="btn btn-danger form-control" asp-page="Index">
+                                    Back to list
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.MenuItemVM.MenuItem != null)
+            {
+                <div class="col-4 p-4">
+                    <img src="@Model.MenuItemVM.MenuItem.Image" class="img-fluid" style="width: 100%; border: 1px solid #bbb9b9" />
+                </div>
+            }
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'lists',
+            menubar: 'file edit format'
+        });
+
+        const ValidateInput = () => {
+            if (document.getElementById("uploadBox").value === "") {
+                swal.fire({
+                    title: 'Error!',
+                    text: 'Please Select an Image',
+                    icon: 'error'
+                });
+            }
+        }
+    </script>
+}

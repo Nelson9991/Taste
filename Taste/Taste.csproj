@@ -1,20 +1,57 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
-        <UserSecretsId>aspnet-Taste-EBECD37B-A032-45B5-B9C6-374546954B3C</UserSecretsId>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>aspnet-Taste-EBECD37B-A032-45B5-B9C6-374546954B3C</UserSecretsId>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="Stripe.net" Version="39.38.0" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1"/>
-    </ItemGroup>
+  <ItemGroup>
+    <Watch Include=".\**\*.cshtml"></Watch>
+    <Watch Include=".\**\*.css"></Watch>
+    <Watch Include=".\**\*.js"></Watch>
+  </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="Pages\Admin\Order\ManageOrder.cshtml" />
+    <Content Remove="Pages\Admin\Order\OrderDetails.cshtml" />
+    <Content Remove="Pages\Admin\Order\OrderList.cshtml" />
+    <Content Remove="Pages\Customer\Cart\OrderConfirmation.cshtml" />
+    <Content Remove="Pages\Customer\Cart\Summary.cshtml" />
+    <Content Remove="wwwroot\js\orderList.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Watch Remove="Pages\Admin\Order\ManageOrder.cshtml" />
+    <Watch Remove="Pages\Admin\Order\OrderDetails.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\Admin\Order\ManageOrder.cshtml" />
+    <None Include="Pages\Admin\Order\OrderDetails.cshtml" />
+    <None Include="Pages\Admin\Order\OrderList.cshtml" />
+    <None Include="Pages\Customer\Cart\OrderConfirmation.cshtml" />
+    <None Include="Pages\Customer\Cart\Summary.cshtml" />
+    <None Include="wwwroot\js\orderList.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+  </ItemGroup>
 </Project>

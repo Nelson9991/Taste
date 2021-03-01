@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using DataAccess.Data.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace DataAccess.Data.Repository
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IList<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, string includeProperties = null)
         {
             var query = _dbSet.AsQueryable();
@@ -35,8 +36,10 @@ namespace DataAccess.Data.Repository
             // Include properties will be comma separated
             if (includeProperties is not null)
             {
-                query = includeProperties.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                    .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+                foreach (var prop in includeProperties.Split(','))
+                {
+                    query = query.Include(prop);
+                }
             }
 
             if (orderBy != null)
@@ -72,6 +75,24 @@ namespace DataAccess.Data.Repository
             await _dbSet.AddAsync(entity);
         }
 
+        public static bool IsValidProperty(
+            string propertyName,
+            bool throwExceptionIfNotFound = true)
+        {
+            var prop = typeof(T).GetProperty(
+                propertyName,
+                BindingFlags.IgnoreCase |
+                BindingFlags.Public |
+                BindingFlags.Instance);
+            if (prop == null && throwExceptionIfNotFound)
+                throw new NotSupportedException(
+                    String.Format(
+                        "ERROR: Property '{0}' does not exist.",
+                        propertyName)
+                );
+            return prop != null;
+        }
+
         public async Task Remove(int id)
         {
             var entity = await _dbSet.FindAsync(id);
@@ -81,6 +102,11 @@ namespace DataAccess.Data.Repository
         public void Remove(T entity)
         {
             _dbSet.Remove(entity);
+        }
+
+        public void RemoveRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
         }
     }
 }
